@@ -188,9 +188,9 @@ void KeyValueHolderCrypt::testAESToMMBuffer() {
     const uint8_t key[] = "TheAESKey";
     constexpr size_t keyLength = sizeof(key) - 1;
 
-    uint8_t iv[AES_KEY_LEN];
+    uint8_t iv[AES_IV_LEN];
     srand((unsigned) time(nullptr));
-    for (uint32_t i = 0; i < AES_KEY_LEN; i++) {
+    for (uint32_t i = 0; i < AES_IV_LEN; i++) {
         iv[i] = (uint8_t) rand();
     }
     AESCrypt crypt1(key, keyLength, iv, sizeof(iv));

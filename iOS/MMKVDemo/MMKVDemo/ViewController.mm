@@ -300,12 +300,12 @@
     [self testMMKV:mmapID withCryptKey:nullptr decodeOnly:NO];
 
     MMKV *kv = [MMKV mmkvWithID:mmapID cryptKey:nullptr];
-    NSData *key_1 = [@"Key_seq_1" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *key_1 = [@"Key_Seq_1" dataUsingEncoding:NSUTF8StringEncoding];
     [kv reKey:key_1];
     [kv clearMemoryCache];
     [self testMMKV:mmapID withCryptKey:key_1 decodeOnly:YES];
 
-    NSData *key_2 = [@"Key_seq_2" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *key_2 = [@"Key_Seq_Very_Looooooooong" dataUsingEncoding:NSUTF8StringEncoding];
     [kv reKey:key_2];
     [kv clearMemoryCache];
     [self testMMKV:mmapID withCryptKey:key_2 decodeOnly:YES];

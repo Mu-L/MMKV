@@ -357,9 +357,9 @@ string MMKV::cryptKey() const {
     SCOPED_LOCK(m_lock);
 
     if (m_crypter) {
-        char key[AES_KEY_LEN];
+        char key[AES256_KEY_LEN];
         m_crypter->getKey(key);
-        return {key, strnlen(key, AES_KEY_LEN)};
+        return {key, strnlen(key, AES256_KEY_LEN)};
     }
     return "";
 }

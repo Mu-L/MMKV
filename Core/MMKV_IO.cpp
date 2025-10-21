@@ -114,7 +114,7 @@ void MMKV::loadFromFile() {
             }
             m_output = new CodedOutputData(ptr + Fixed32Size, m_file->getFileSize() - Fixed32Size);
             m_output->seek(m_actualSize);
-            if (needFullWriteback) {
+            if (needFullWriteback && !isReadOnly()) {
                 fullWriteback();
             }
         } else {
@@ -122,7 +122,9 @@ void MMKV::loadFromFile() {
             SCOPED_LOCK(m_exclusiveProcessLock);
 
             m_output = new CodedOutputData(ptr + Fixed32Size, m_file->getFileSize() - Fixed32Size);
-            if (m_actualSize > 0) {
+            if (isReadOnly()) {
+                // do nothing
+            } else if (m_actualSize > 0) {
                 writeActualSize(0, 0, nullptr, IncreaseSequence);
                 sync(MMKV_SYNC);
             } else {
@@ -224,6 +226,11 @@ void MMKV::loadMetaInfoAndCheck() {
     }
 
     m_metaInfo->read(m_metaFile->getMemory());
+
+    if (isReadOnly()) {
+        return;
+    }
+
     // the meta file is in specious status
     if (m_metaInfo->m_version >= MMKVVersionHolder) {
         MMKVWarning("meta file [%s] in specious state, version %u, flags 0x%llx", m_mmapID.c_str(),
@@ -508,6 +515,10 @@ void MMKV::oldStyleWriteActualSize(size_t actualSize) {
 }
 
 bool MMKV::writeActualSize(size_t size, uint32_t crcDigest, const void *iv, bool increaseSequence) {
+    if (isReadOnly()) {
+        return false;
+    }
+
     // backward compatibility
     oldStyleWriteActualSize(size);
 
@@ -1065,6 +1076,10 @@ bool MMKV::fullWriteback(AESCrypt *newCrypter, bool onlyWhileExpire) {
     }
     if (!isFileValid()) {
         MMKVWarning("[%s] file not valid", m_mmapID.c_str());
+        return false;
+    }
+    if (isReadOnly()) {
+        MMKVWarning("[%s] file readonly", m_mmapID.c_str());
         return false;
     }
 

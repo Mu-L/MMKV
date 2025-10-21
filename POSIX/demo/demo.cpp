@@ -1329,6 +1329,17 @@ void MyLogHandler(MMKVLogLevel level, const char *file, int line, const char *fu
     printf("redirecting-[%s] <%s:%d::%s> %s\n", desc, file, line, function, message.c_str());
 }
 
+void testReadonlyCrash() {
+    std::string *key = nullptr;
+    const std::string g_ro_path = "/tmp/mmkv_readonly";
+    MMKV *self = MMKV::mmkvWithID("UnitTestRo", MMKVMode::MMKV_MULTI_PROCESS | MMKVMode::MMKV_READ_ONLY, key, &g_ro_path);
+//    MMKV *self = MMKV::mmkvWithID("UnitTestRo", MMKVMode::MMKV_MULTI_PROCESS, key, &g_ro_path);
+    std::string tmp;
+//    self->set("", "test_ro_string");
+    self->getString("test_ro_string", tmp);
+    printf("value: %s\n", tmp.c_str());
+}
+
 int main() {
     locale::global(locale(""));
     wcout.imbue(locale(""));
@@ -1372,5 +1383,6 @@ int main() {
 //    testFtruncateFail();
     testRemoveStorage();
     testReadOnly();
+    testReadonlyCrash();
     testImport();
 }

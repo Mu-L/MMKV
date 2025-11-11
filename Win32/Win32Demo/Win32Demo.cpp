@@ -423,6 +423,7 @@ void testReadOnly() {
 
 void testNameSpace() {
     wstring rootDir = getAppDataRoaming(L"Tencent", L"微信-mmkv_namespace");
+    // wstring rootDir = L"D:\\mmkv";
     auto ns = MMKV::nameSpace(rootDir);
     auto kv = ns.mmkvWithID("test_namespace");
     functionalTest(kv, false);

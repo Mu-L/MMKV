@@ -1069,7 +1069,12 @@ KVHolderRet_t MMKV::overrideDataWithKey(const MMBuffer &data, const KeyValueHold
         }
     }
     auto basePtr = (uint8_t *) m_file->getMemory() + Fixed32Size;
-    MMBuffer keyData(basePtr + kvHolder.offset, rawKeySize, MMBufferNoCopy);
+    MMBuffer keyData;
+    if (kvHolder.offset < ItemSizeHolderSize) {
+        keyData = MMBuffer(basePtr + kvHolder.offset, rawKeySize, MMBufferCopy);
+    } else {
+        keyData = MMBuffer(basePtr + kvHolder.offset, rawKeySize, MMBufferNoCopy);
+    }
 
     return doOverrideDataWithKey(data, keyData, isDataHolder, keyLength);
 }

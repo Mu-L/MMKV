@@ -368,6 +368,22 @@ void cornetSizeTest() {
     mmkv->trim();
 }
 
+void itemSizeHolderTest() {
+    auto mmkv = MMKV::mmkvWithID("itemsize");
+    // mmkv->clearAll();
+    mmkv->set(true, "bool");
+    mmkv->clearMemoryCache();
+    // you won't find the key "bool"
+    cout << "allKeys: " << ::to_string(mmkv->allKeys()) << endl;
+
+    string aesKey = "cryptKey";
+    mmkv = MMKV::mmkvWithID("itemsizecrypt", MMKV_SINGLE_PROCESS, &aesKey);
+    mmkv->set(true, "bool");
+    mmkv->clearMemoryCache();
+    // you won't find the key "bool"
+    cout << "allKeys: " << ::to_string(mmkv->allKeys()) << endl;
+}
+
 void fastRemoveCornetSizeTest() {
     string aesKey = "aes";
     auto mmkv = MMKV::mmkvWithID("fastRemoveCornerSize", MMKV_MULTI_PROCESS, &aesKey);
@@ -1365,7 +1381,7 @@ int main() {
     }
 
     //fastRemoveCornetSizeTest();
-    //cornetSizeTest();
+    // cornetSizeTest();
     //testClearEmptyMMKV();
     brutleTest();
     threadTest();
@@ -1385,4 +1401,5 @@ int main() {
     testReadOnly();
     testReadonlyCrash();
     testImport();
+    itemSizeHolderTest();
 }

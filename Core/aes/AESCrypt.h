@@ -71,7 +71,7 @@ private:
     AESCrypt(const AESCrypt &other, const AESCryptStatus &status);
 
 public:
-    AESCrypt(const void *key, size_t keyLength, const void *iv = nullptr, size_t ivLength = 0);
+    AESCrypt(const void *key, size_t keyLength, const void *iv = nullptr, size_t ivLength = 0, bool aes256 = false);
     AESCrypt(AESCrypt &&other) = default;
 
     ~AESCrypt();

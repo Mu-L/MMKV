@@ -1357,7 +1357,7 @@ bool MMKV::doFullWriteBack(pair<MMBuffer, size_t> prepared, AESCrypt *, bool nee
 #endif // MMKV_DISABLE_CRYPT
 
 #ifndef MMKV_DISABLE_CRYPT
-bool MMKV::reKey(const string &cryptKey) {
+bool MMKV::reKey(const string &cryptKey, bool aes256) {
     if (isReadOnly()) {
         MMKVWarning("[%s] file readonly", m_mmapID.c_str());
         return false;
@@ -1379,7 +1379,7 @@ bool MMKV::reKey(const string &cryptKey) {
             } else {
                 // change encryption key
                 MMKVInfo("reKey with new aes key");
-                auto newCrypt = new AESCrypt(cryptKey.data(), cryptKey.length());
+                auto newCrypt = new AESCrypt(cryptKey.data(), cryptKey.length(), nullptr, 0, aes256);
                 m_hasFullWriteback = false;
                 ret = fullWriteback(newCrypt);
                 if (ret) {
@@ -1407,7 +1407,7 @@ bool MMKV::reKey(const string &cryptKey) {
             // transform plain text to encrypted text
             MMKVInfo("reKey to a aes key");
             m_hasFullWriteback = false;
-            auto newCrypt = new AESCrypt(cryptKey.data(), cryptKey.length());
+            auto newCrypt = new AESCrypt(cryptKey.data(), cryptKey.length(), nullptr, 0, aes256);
             ret = fullWriteback(newCrypt);
             if (ret) {
                 m_crypter = newCrypt;

@@ -46,8 +46,8 @@ uint32_t AESCrypt::randomItemSizeHolder(uint32_t size) {
 
 using namespace openssl;
 
-AESCrypt::AESCrypt(const void *key, size_t keyLength, const void *iv, size_t ivLength)
-    : m_isAES256(keyLength > AES_KEY_LEN && keyLength <= AES256_KEY_LEN) {
+AESCrypt::AESCrypt(const void *key, size_t keyLength, const void *iv, size_t ivLength, bool aes256)
+    : m_isAES256(aes256) {
     if (key && keyLength > 0) {
         auto maxKeyLen = getMaxKeyLength();
         memcpy(m_key, key, (keyLength > maxKeyLen) ? maxKeyLen : keyLength);
@@ -199,8 +199,9 @@ void AESCrypt::testAESCrypt(const void *key, size_t keyLength, const uint8_t pla
             iv[i] = (uint8_t) rand();
         }
     }
-    AESCrypt crypt1(key, keyLength, iv, sizeof(iv));
-    AESCrypt crypt2(key, keyLength, iv, sizeof(iv));
+    auto aes256 = (keyLength > AES_KEY_LEN);
+    AESCrypt crypt1(key, keyLength, iv, sizeof(iv), aes256);
+    AESCrypt crypt2(key, keyLength, iv, sizeof(iv), aes256);
 
     auto encryptText = new uint8_t[DEFAULT_MMAP_SIZE];
     auto decryptText = new uint8_t[DEFAULT_MMAP_SIZE];
@@ -270,17 +271,20 @@ void AESCrypt::testAESCrypt(const void *key, size_t keyLength, const uint8_t pla
 void AESCrypt::testAESCrypt() {
     testRandomPlaceHolder();
 
-    const uint8_t plainText[] = "Hello, OpenSSL-mmkv::AESCrypt::testAESCrypt() with AES CFB 128.";
-    constexpr size_t textLength = sizeof(plainText) - 1;
-    const uint8_t key[] = "TheAESKey";
-    constexpr size_t keyLength = sizeof(key) - 1;
-    testAESCrypt(key, keyLength, plainText, textLength);
-
-    const uint8_t plainText256[] = "Hello, OpenSSL-mmkv::AESCrypt::testAESCrypt() with AES CFB 256.";
-    constexpr size_t textLength256 = sizeof(plainText256) - 1;
-    const uint8_t key256[] = "TheVeryLooooooooongAESKey";
-    constexpr size_t keyLength256 = sizeof(key) - 1;
-    testAESCrypt(key256, keyLength256, plainText256, textLength256);
+    {
+        const uint8_t plainText[] = "Hello, OpenSSL-mmkv::AESCrypt::testAESCrypt() with AES CFB 128.";
+        constexpr size_t textLength = sizeof(plainText) - 1;
+        const uint8_t key[] = "TheAESKey";
+        constexpr size_t keyLength = sizeof(key) - 1;
+        testAESCrypt(key, keyLength, plainText, textLength);
+    }
+    {
+        const uint8_t plainText256[] = "Hello, OpenSSL-mmkv::AESCrypt::testAESCrypt() with AES CFB 256.";
+        constexpr size_t textLength256 = sizeof(plainText256) - 1;
+        const uint8_t key256[] = "TheVeryLooooooooongAESKey";
+        constexpr size_t keyLength256 = sizeof(key256) - 1;
+        testAESCrypt(key256, keyLength256, plainText256, textLength256);
+    }
 }
 
 #    endif // MMKV_DEBUG

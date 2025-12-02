@@ -19,7 +19,7 @@ dependencies:
     '>=2.3.0 <2.4.0'
 #    path: ../mmkv_android
   mmkv_ohos:
-  '>=2.3.0 <2.4.0'
+    '>=2.3.0 <2.4.0'
 #    path: ../mmkv_ohos
   mmkv_win32:
     '>=2.3.0 <2.4.0'
